@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>{% block title %}Detské Príkrmy{% endblock %}</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+   <link rel="icon" href="{{ url_for('static', filename='img/baby_food_icon.png') }}" type="image/png">
+</head>
+<body>
+   <header>
+       <h1><a href="{{ url_for('index') }}" class="app-title">Detské Príkrmy</a></h1>
+       <nav>
+           <a href="{{ url_for('index') }}">Domov</a>
+           <a href="{{ url_for('add_new_prikrm') }}">Pridať nový príkrm</a>
+           
+           {% if kategorie %} {# Zobrazí dropdown len ak existujú kategórie #}
+           <div class="dropdown">
+               <button class="dropbtn">Kategórie ▼</button>
+               <div class="dropdown-content">
+                   {% for cat in kategorie %}
+                       <a href="{{ url_for('kategoria_list', kategoria_nazov=cat.nazov) }}">{{ cat.nazov }}</a>
+                   {% endfor %}
+               </div>
+           </div>
+           {% endif %}
+
+           {% if current_user.is_authenticated %}
+               <a href="{{ url_for('logout') }}" class="logout-btn">Odhlásiť ({{ current_user.username }})</a>
+           {% else %}
+               <a href="{{ url_for('login') }}" class="login-btn">Prihlásiť</a>
+           {% endif %}
+       </nav>
+   </header>
+
+   <main>
+       {% with messages = get_flashed_messages(with_categories=true) %}
+           {% if messages %}
+               <ul class="flash-messages">
+               {% for category, message in messages %}
+                   <li class="flash-message {{ category }}">{{ message }}</li>
+               {% endfor %}
+               </ul>
+           {% endif %}
+       {% endwith %}
+       {% block content %}{% endblock %}
+   </main>
+
+   <footer>
+       <p>© 2025 Aplikácia Príkrmy. Všetky práva vyhradené.</p>
+   </footer>
+
+   {# jQuery pre AJAX funkčnosť (pre tlačidlá množstva) #}
+   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+   {% block scripts %}{% endblock %}
+</body>
+</html>

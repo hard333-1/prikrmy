@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block title %}Detail Príkrmu: {{ prikrm.nazov_prikrmu }}{% endblock %}
+
+{% block content %}
+   <h2>Detail Príkrmu</h2>
+   <div class="detail-card">
+       {% if prikrm.obrazok %}
+           <img src="{{ prikrm.obrazok }}" alt="{{ prikrm.nazov_prikrmu }}">
+       {% else %}
+           <img src="{{ url_for('static', filename='img/placeholder.png') }}" alt="Bez obrázka">
+       {% endif %}
+       <h2>{{ prikrm.nazov_prikrmu }}</h2>
+       <p><strong>Kategória:</strong> {{ prikrm.kategoria }}</p>
+       <p><strong>Vek od:</strong> {{ prikrm.vek_od_mesiace if prikrm.vek_od_mesiace is not none else 'N/A' }} mesiacov</p>
+       <p><strong>Dátum spotreby:</strong> {{ prikrm.datum_spotreby if prikrm.datum_spotreby else 'N/A' }}</p>
+       <p><strong>Množstvo:</strong> {{ prikrm.mnozstvo if prikrm.mnozstvo is not none else 'N/A' }}</p>
+       <p><strong>Poznámky:</strong> {{ prikrm.poznamky if prikrm.poznamky else 'Žiadne' }}</p>
+       <p><strong>Status:</strong> {{ prikrm.status }}</p>
+       <div class="actions">
+           <a href="{{ url_for('edit_prikrm', prikrm_id=prikrm.id) }}" class="btn edit-btn">Upraviť</a>
+           <form action="{{ url_for('delete_prikrm', prikrm_id=prikrm.id) }}" method="post" style="display:inline;">
+               <button type="submit" class="btn delete-btn" onclick="return confirm('Naozaj chcete vymazať tento príkrm?');">Vymazať</button>
+           </form>
+           <a href="{{ url_for('index') }}" class="btn back-btn">Späť na zoznam</a>
+       </div>
+   </div>
+{% endblock %}

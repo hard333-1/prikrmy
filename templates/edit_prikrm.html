@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Upraviť Príkrm - {{ prikrm.nazov_prikrmu }}{% endblock %}
+
+{% block content %}
+   <h2>Upraviť Príkrm: {{ prikrm.nazov_prikrmu }}</h2>
+   <form method="POST" enctype="multipart/form-data">
+       <div>
+           <label for="nazov_prikrmu">Názov príkrmu:</label>
+           <input type="text" id="nazov_prikrmu" name="nazov_prikrmu" value="{{ form_data.nazov_prikrmu or '' }}" required>
+       </div>
+       <div>
+           <label for="kategoria">Kategória:</label>
+           <select id="kategoria" name="kategoria" onchange="toggleNovaKategoriaInput()">
+               <option value="">-- Vyberte kategóriu --</option>
+               {% for cat in kategorie %}
+                   <option value="{{ cat.nazov }}" {% if (form_data.kategoria_nazov or '') == cat.nazov %}selected{% endif %}>{{ cat.nazov }}</option>
+               {% endfor %}
+               <option value="Iné" {% if form_data.kategoria_nazov and form_data.kategoria_nazov not in [c.nazov for c in kategorie] %}selected{% endif %}>Iné (vytvoriť novú)</option>
+           </select>
+       </div>
+       <div id="nova_kategoria_div" style="display:none;">
+           <label for="nova_kategoria_text">Názov novej kategórie:</label>
+           <input type="text" id="nova_kategoria_text" name="nova_kategoria_text" value="{% if form_data.kategoria_nazov and form_data.kategoria_nazov not in [c.nazov for c in kategorie] %}{{ form_data.kategoria_nazov }}{% endif %}">
+           <label for="nova_kategoria_obrazok" class="file-label">Obrázok kategórie (voliteľné):</label>
+           <input type="file" id="nova_kategoria_obrazok" name="nova_kategoria_obrazok" accept="image/*">
+           {% if form_data.kategoria_obrazok_path %}
+               <p>Aktuálny obrázok kategórie: <img src="{{ form_data.kategoria_obrazok_path }}" alt="Obrázok kategórie" style="max-width: 100px; height: auto; display: block; margin-top: 5px;"></p>
+           {% endif %}
+       </div>
+       <div>
+           <label for="vek_od_mesiace">Vek od (mesiace, voliteľné):</label>
+           <input type="number" id="vek_od_mesiace" name="vek_od_mesiace" value="{{ form_data.vek_od_mesiace or '' }}">
+       </div>
+       <div>
+           <label for="datum_spotreby">Dátum spotreby:</label>
+           <input type="date" id="datum_spotreby" name="datum_spotreby" value="{{ form_data.datum_spotreby or '' }}" required>
+       </div>
+       <div>
+           <label for="mnozstvo">Množstvo (ks):</label>
+           <input type="number" id="mnozstvo" name="mnozstvo" value="{{ form_data.mnozstvo or 0 }}" required>
+       </div>
+       <div>
+           <label for="poznamky">Poznámky (voliteľné):</label>
+           <textarea id="poznamky" name="poznamky">{{ form_data.poznamky or '' }}</textarea>
+       </div>
+       <div>
+           <label for="obrazok">Obrázok príkrmu (voliteľné):</label>
+           <input type="file" id="obrazok" name="obrazok" accept="image/*">
+           {% if prikrm.obrazok %}
+               <p>Aktuálny obrázok: <img src="{{ prikrm.obrazok }}" alt="Obrázok príkrmu" style="max-width: 100px; height: auto; display: block; margin-top: 5px;"></p>
+           {% endif %}
+       </div>
+       <div>
+           <label for="status">Status:</label>
+           <select id="status" name="status">
+               <option value="aktívny" {% if form_data.status == 'aktívny' %}selected{% endif %}>Aktívny</option>
+               <option value="spotrebovaný" {% if form_data.status == 'spotrebovaný' %}selected{% endif %}>Spotrebovaný</option>
+               <option value="vyradený" {% if form_data.status == 'vyradený' %}selected{% endif %}>Vyradený</option>
+           </select>
+       </div>
+       <div>
+           <button type="submit">Uložiť zmeny</button>
+       </div>
+   </form>
+   <a href="{{ url_for('prikrm_detail', prikrm_id=prikrm.id) }}" class="btn back-btn">Späť na detail</a>
+   <script>
+       function toggleNovaKategoriaInput() {
+           var kategoriaSelect = document.getElementById('kategoria');
+           var novaKategoriaDiv = document.getElementById('nova_kategoria_div');
+           if (kategoriaSelect.value === 'Iné') {
+               novaKategoriaDiv.style.display = 'block';
+               document.getElementById('nova_kategoria_text').setAttribute('required', 'required');
+           } else {
+               novaKategoriaDiv.style.display = 'none';
+               document.getElementById('nova_kategoria_text').removeAttribute('required');
+           }
+       }
+       document.addEventListener('DOMContentLoaded', toggleNovaKategoriaInput);
+   </script>
+{% endblock %}

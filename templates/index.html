@@ -1,0 +1,33 @@
+{% extends 'base.html' %}
+
+{% block title %}Domov - Detské Príkrmy{% endblock %}
+
+{% block content %}
+   <h2>Vyberte kategóriu príkrmov</h2>
+   {% if kategorie %}
+       <div class="category-grid"> {# Nový grid pre kategórie #}
+           {% for cat in kategorie %}
+               <a href="{{ url_for('kategoria_list', kategoria_nazov=cat.nazov) }}" class="category-card">
+                   <img src="{{ cat.obrazok_path or url_for('static', filename='img/placeholder_category.png') }}" alt="{{ cat.nazov }}" class="category-img">
+                   <h3>{{ cat.nazov }}</h3>
+                   <p>Zobraziť príkrmy v tejto kategórii</p>
+               </a>
+           {% endfor %}
+           {# Karta pre "Pridať nový príkrm" #}
+           <a href="{{ url_for('add_new_prikrm') }}" class="category-card add-new-card">
+               <img src="{{ url_for('static', filename='img/add_new_placeholder.png') }}" alt="Pridať nový príkrm" class="category-img">
+               <h3>+ Pridať nový príkrm</h3>
+               <p>Pridajte nový príkrm do databázy</p>
+           </a>
+       </div>
+   {% else %}
+       <p>Žiadne kategórie zatiaľ nie sú vytvorené. <a href="{{ url_for('add_new_prikrm') }}">Pridajte prvý príkrm</a> a kategória sa vytvorí automaticky.</p>
+       <div class="category-grid">
+            <a href="{{ url_for('add_new_prikrm') }}" class="category-card add-new-card">
+               <img src="{{ url_for('static', filename='img/add_new_placeholder.png') }}" alt="Pridať nový príkrm" class="category-img">
+               <h3>+ Pridať nový príkrm</h3>
+               <p>Pridajte nový príkrm do databázy</p>
+           </a>
+       </div>
+   {% endif %}
+{% endblock %}

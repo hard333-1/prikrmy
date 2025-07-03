@@ -1,0 +1,73 @@
+{% extends 'base.html' %}
+
+{% block title %}Príkrmy v kategórii {{ kategoria_nazov }}{% endblock %}
+
+{% block content %}
+   <h2>Príkrmy v kategórii: {{ kategoria_nazov }}</h2>
+   {% if prikrmy %}
+       <div class="prikrmy-grid">
+           {% for prikrm in prikrmy %}
+               <div class="prikrm-card">
+                   <a href="{{ url_for('prikrm_detail', prikrm_id=prikrm.id) }}">
+                       <img src="{{ prikrm.obrazok or url_for('static', filename='img/placeholder.png') }}" alt="{{ prikrm.nazov_prikrmu }}">
+                       <h3>{{ prikrm.nazov_prikrmu }}</h3>
+                   </a>
+                   <p>Kategória: {{ prikrm.kategoria_nazov }}</p>
+                   <p>Vek od: {% if prikrm.vek_od_mesiace %}{{ prikrm.vek_od_mesiace }} mes.{% else %}Nezadané{% endif %}</p>
+                   <p>Dátum spotreby: {{ prikrm.datum_spotreby }}</p>
+                   <p>Status: {{ prikrm.status }}</p>
+                   <div class="quantity-controls">
+                       <button class="btn quantity-btn-minus" data-prikrm-id="{{ prikrm.id }}">-</button>
+                       <span class="quantity-display" id="quantity-{{ prikrm.id }}">{{ prikrm.mnozstvo or 0 }}</span>
+                       <button class="btn quantity-btn-plus" data-prikrm-id="{{ prikrm.id }}">+</button>
+                   </div>
+                   <div class="actions">
+                       <a href="{{ url_for('edit_prikrm', prikrm_id=prikrm.id) }}" class="btn edit-btn">Upraviť</a>
+                       <form action="{{ url_for('delete_prikrm', prikrm_id=prikrm.id) }}" method="POST" style="display:inline;">
+                           <button type="submit" class="btn delete-btn" onclick="return confirm('Naozaj chcete vymazať tento príkrm?');">Vymazať</button>
+                       </form>
+                   </div>
+               </div>
+           {% endfor %}
+       </div>
+   {% else %}
+       <p>V kategórii "{{ kategoria_nazov }}" zatiaľ nie sú žiadne príkrmy. <a href="{{ url_for('add_new_prikrm') }}">Pridajte prvý!</a></p>
+   {% endif %}
+   <a href="{{ url_for('index') }}" class="btn back-btn">Späť na kategórie</a>
+
+{% endblock %}
+
+{% block scripts %}
+   <script>
+       $(document).ready(function() {
+           $('.quantity-btn-plus').on('click', function() {
+               var prikrmId = $(this).data('prikrm-id');
+               updateQuantity(prikrmId, 'increment');
+           });
+
+           $('.quantity-btn-minus').on('click', function() {
+               var prikrmId = $(this).data('prikrm-id');
+               updateQuantity(prikrmId, 'decrement');
+           });
+
+           function updateQuantity(prikrmId, action) {
+               $.ajax({
+                   url: `/update_quantity/${prikrmId}/${action}`,
+                   type: 'POST',
+                   success: function(response) {
+                       if (response.success) {
+                           $('#quantity-' + prikrmId).text(response.new_quantity);
+                           // Voliteľne: môžete tu zobraziť flash správu pomocou JS, ak potrebujete
+                       } else {
+                           alert('Chyba pri aktualizácii množstva: ' + response.message);
+                       }
+                   },
+                   error: function(xhr, status, error) {
+                       alert('Nastala chyba pri komunikácii so serverom: ' + error);
+                       console.error("AJAX error: ", status, error, xhr.responseText);
+                   }
+               });
+           }
+       });
+   </script>
+{% endblock %}

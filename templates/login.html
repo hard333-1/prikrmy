@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="sk">
+<head>
+   <meta charset="UTF-8">
+   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <title>Prihlásenie - Detské Príkrmy</title>
+   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+   <style>
+       body {
+           display: flex;
+           justify-content: center;
+           align-items: center;
+           min-height: 100vh;
+           background-color: #eef1f5;
+       }
+       .login-container {
+           background-color: #fff;
+           padding: 40px;
+           border-radius: 8px;
+           box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+           width: 100%;
+           max-width: 400px;
+           text-align: center;
+       }
+       .login-container h2 {
+           margin-bottom: 30px;
+           color: #3f51b5;
+       }
+       .login-container form div {
+           margin-bottom: 20px;
+           text-align: left;
+       }
+       .login-container label {
+           display: block;
+           margin-bottom: 8px;
+           font-weight: bold;
+           color: #555;
+       }
+       .login-container input[type="text"],
+       .login-container input[type="password"] {
+           width: 100%;
+           padding: 12px;
+           border: 1px solid #ccc;
+           border-radius: 5px;
+           box-sizing: border-box;
+           font-size: 1em;
+       }
+       .login-container button {
+           background-color: #3f51b5;
+           color: white;
+           padding: 12px 25px;
+           border: none;
+           border-radius: 5px;
+           cursor: pointer;
+           font-size: 1.1em;
+           font-weight: bold;
+           transition: background-color 0.3s ease;
+           width: 100%;
+       }
+       .login-container button:hover {
+           background-color: #303f9f;
+       }
+       .flash-messages {
+           list-style: none;
+           padding: 0;
+           margin-top: 20px;
+       }
+       .flash-message {
+           padding: 10px;
+           margin-bottom: 10px;
+           border-radius: 5px;
+           font-size: 0.9em;
+           border: 1px solid transparent;
+           text-align: left;
+       }
+       .flash-message.error {
+           background-color: #f8d7da;
+           color: #721c24;
+           border-color: #f5c6cb;
+       }
+       .flash-message.success {
+           background-color: #d4edda;
+           color: #155724;
+           border-color: #c3e6cb;
+       }
+       .flash-message.info {
+           background-color: #d1ecf1;
+           color: #0c5460;
+           border-color: #bee5eb;
+       }
+   </style>
+</head>
+<body>
+   <div class="login-container">
+       <h2>Prihlásenie do Príkrmy App</h2>
+       {% with messages = get_flashed_messages(with_categories=true) %}
+           {% if messages %}
+               <ul class="flash-messages">
+                   {% for category, message in messages %}
+                       <li class="flash-message {{ category }}">{{ message }}</li>
+                   {% endfor %}
+               </ul>
+           {% endif %}
+       {% endwith %}
+       <form method="POST">
+           <div>
+               <label for="username">Užívateľské meno:</label>
+               <input type="text" id="username" name="username" required>
+           </div>
+           <div>
+               <label for="password">Heslo:</label>
+               <input type="password" id="password" name="password" required>
+           </div>
+           <button type="submit">Prihlásiť sa</button>
+       </form>
+   </div>
+</body>
+</html>
